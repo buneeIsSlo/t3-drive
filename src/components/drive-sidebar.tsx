@@ -1,6 +1,6 @@
-import { HardDrive, Users, Clock, Star, Trash2, Cloud, Smartphone, Monitor } from "lucide-react"
-import { Button } from "~/components/ui/button"
-import { Progress } from "~/components/ui/progress"
+import { HardDrive, Users, Clock, Star, Trash2, Cloud } from "lucide-react";
+import { Button } from "~/components/ui/button";
+import { Progress } from "~/components/ui/progress";
 
 export function DriveSidebar() {
   const sidebarItems = [
@@ -9,13 +9,11 @@ export function DriveSidebar() {
     { icon: Clock, label: "Recent" },
     { icon: Star, label: "Starred" },
     { icon: Trash2, label: "Trash" },
-  ]
+  ];
 
   return (
-    <aside className="w-64 border-r border-sidebar-border bg-sidebar p-4 flex flex-col">
-      
-
-      <nav className="space-y-1 flex-1">
+    <aside className="border-sidebar-border bg-sidebar flex w-64 flex-col border-r p-4">
+      <nav className="flex-1 space-y-1">
         {sidebarItems.map((item) => (
           <Button
             key={item.label}
@@ -34,16 +32,14 @@ export function DriveSidebar() {
 
       <div className="mt-auto space-y-4">
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <Cloud className="h-4 w-4" />
             <span>Storage</span>
           </div>
           <Progress value={65} className="h-2" />
-          <p className="text-xs text-muted-foreground">9.7 GB of 15 GB used</p>
+          <p className="text-muted-foreground text-xs">9.7 GB of 15 GB used</p>
         </div>
-
-        
       </div>
     </aside>
-  )
+  );
 }
