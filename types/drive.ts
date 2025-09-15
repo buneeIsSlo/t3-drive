@@ -1,17 +1,15 @@
 export interface FileItem {
-  id: string
-  name: string
-  type: "file"
-  modifiedDate: string
-  size: string
-  url: string
+  id: string;
+  name: string;
+  type: "file";
+  size: string;
+  parent: string;
+  url: string;
 }
 
 export interface FolderItem {
-  id: string
-  name: string
-  type: "folder"
-  modifiedDate: string
-  size: null
-  children?: (FileItem | FolderItem)[]
+  id: string;
+  name: string;
+  type: "folder";
+  parent: string | null;
 }

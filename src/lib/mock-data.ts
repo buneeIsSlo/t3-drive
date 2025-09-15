@@ -1,0 +1,143 @@
+import type { FileItem, FolderItem } from "types/drive";
+
+const mockFolders: FolderItem[] = [
+  {
+    id: "root",
+    name: "root",
+    type: "folder",
+    parent: null,
+  },
+  {
+    id: "1",
+    name: "Documents",
+    type: "folder",
+    parent: "root",
+  },
+  {
+    id: "2",
+    name: "Images",
+    type: "folder",
+    parent: "root",
+  },
+  {
+    id: "3",
+    name: "Projects",
+    type: "folder",
+    parent: "4",
+  },
+  {
+    id: "4",
+    name: "Work",
+    type: "folder",
+    parent: "root",
+  },
+];
+
+const mockFiles: FileItem[] = [
+  {
+    id: "1",
+    name: "Fight.pdf",
+    type: "file",
+    parent: "root",
+    size: "414 KB",
+    url: "/files/Fight.pdf",
+  },
+  {
+    id: "2",
+    name: "Club.png",
+    type: "file",
+    parent: "root",
+    size: "414 KB",
+    url: "/files/Club.png",
+  },
+  {
+    id: "3",
+    name: "test.txt",
+    type: "file",
+    parent: "root",
+    size: "414 KB",
+    url: "/files/test.txt",
+  },
+  {
+    id: "4",
+    name: "Resume.pdf",
+    type: "file",
+    parent: "1",
+    size: "245 KB",
+    url: "/files/Resume.pdf",
+  },
+  {
+    id: "5",
+    name: "Cover Letter.docx",
+    type: "file",
+    parent: "1",
+    size: "89 KB",
+    url: "/files/Cover-Letter.docx",
+  },
+  {
+    id: "6",
+    name: "Project Proposal.pdf",
+    type: "file",
+    parent: "1",
+    size: "1.2 MB",
+    url: "/files/Project-Proposal.pdf",
+  },
+  {
+    id: "7",
+    name: "vacation-photo.jpg",
+    type: "file",
+    parent: "2",
+    size: "2.4 MB",
+    url: "/files/vacation-photo.jpg",
+  },
+  {
+    id: "8",
+    name: "screenshot.png",
+    type: "file",
+    parent: "2",
+    size: "856 KB",
+    url: "/files/screenshot.png",
+  },
+  {
+    id: "9",
+    name: "logo-design.svg",
+    type: "file",
+    parent: "2",
+    size: "124 KB",
+    url: "/files/logo-design.svg",
+  },
+  {
+    id: "10",
+    name: "Spreadsheet.xlsx",
+    type: "file",
+    parent: "4",
+    size: "567 KB",
+    url: "/files/Spreadsheet.xlsx",
+  },
+  {
+    id: "11",
+    name: "Presentation.pptx",
+    type: "file",
+    parent: "4",
+    size: "3.2 MB",
+    url: "/files/Presentation.pptx",
+  },
+  {
+    id: "12",
+    name: "Website Mockup.fig",
+    type: "file",
+    parent: "3",
+    size: "4.1 MB",
+    url: "/files/Website-Mockup.fig",
+  },
+  {
+    id: "13",
+    name: "Database Schema.sql",
+    type: "file",
+    parent: "3",
+    size: "45 KB",
+    url: "/files/Database-Schema.sql",
+  },
+];
+
+export { mockFolders, mockFiles };
