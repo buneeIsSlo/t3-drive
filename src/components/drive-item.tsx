@@ -1,6 +1,9 @@
-import type { FileItem, FolderItem } from "types/drive";
+import type { filesTable, foldersTable } from "~/server/db/schema";
 import type { ViewMode } from "./drive-content";
 import { FolderIcon, FileIcon as FileGlyph } from "lucide-react";
+
+export type FileItem = typeof filesTable.$inferSelect;
+export type FolderItem = typeof foldersTable.$inferSelect;
 
 export function FileRow({
   file,
