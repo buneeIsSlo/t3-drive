@@ -2,7 +2,8 @@
 
 import type React from "react";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import {
   ChevronRight,
   LayoutGrid,
@@ -23,76 +24,15 @@ import {
 export type ViewMode = "grid" | "list";
 
 interface DriveContentProps {
-  initialFiles: FileItem[];
-  initialFolders: FolderItem[];
+  files: FileItem[];
+  folders: FolderItem[];
+  parents: FolderItem[]; // ordered from root to current
 }
 
-export function DriveContent({
-  initialFiles,
-  initialFolders,
-}: DriveContentProps) {
-  const [currentFolder, setCurrentFolder] = useState<number>(0); // 0 is root
+export function DriveContent({ files, folders, parents }: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
-
-  // Filter items based on current folder
-  const currentItems = useMemo(() => {
-    const folders = initialFolders.filter((f) => f.parent === currentFolder);
-    const files = initialFiles.filter((f) => f.parent === currentFolder);
-    return { folders, files };
-  }, [currentFolder, initialFolders, initialFiles]);
-
-  const { folders, files } = currentItems;
-
-  // Build breadcrumbs
-  const breadcrumbs = useMemo(() => {
-    const breadcrumbs = [];
-    let currentId = currentFolder;
-
-    while (currentId !== 0) {
-      const folder = initialFolders.find((f) => f.id === currentId);
-      if (folder) {
-        breadcrumbs.unshift(folder);
-        currentId = folder.parent ?? 0;
-      } else {
-        break;
-      }
-    }
-
-    return breadcrumbs;
-  }, [currentFolder, initialFolders]);
-
-  const currentPath = useMemo(() => {
-    return ["My Drive", ...breadcrumbs.map((f) => f.name)];
-  }, [breadcrumbs]);
-
-  const navigateToFolder = (folder: FolderItem) => {
-    setCurrentFolder(folder.id);
-  };
-
-  const navigateBack = () => {
-    if (currentFolder !== 0) {
-      const currentFolderData = initialFolders.find(
-        (f) => f.id === currentFolder,
-      );
-      if (currentFolderData && currentFolderData.parent !== null) {
-        setCurrentFolder(currentFolderData.parent);
-      } else {
-        setCurrentFolder(0);
-      }
-    }
-  };
-
-  const navigateToBreadcrumb = (index: number) => {
-    if (index === 0) {
-      setCurrentFolder(0);
-    } else {
-      const targetFolder = breadcrumbs[index - 1];
-      if (targetFolder) {
-        setCurrentFolder(targetFolder.id);
-      }
-    }
-  };
+  const breadcrumbs = parents;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -117,26 +57,47 @@ export function DriveContent({
       <div className="border-border bg-background border-b p-4">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {currentPath.length > 1 && (
-              <Button variant="outline" size="icon" onClick={navigateBack}>
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            )}
-            <nav className="flex items-center gap-1 text-sm">
-              {currentPath.map((segment, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <button
-                    onClick={() => navigateToBreadcrumb(index)}
+            <div className="flex items-center gap-2">
+              {breadcrumbs.length > 0 && (
+                <Link
+                  href={
+                    breadcrumbs.length > 1
+                      ? `/my-drive/folders/${breadcrumbs[breadcrumbs.length - 2]!.id}`
+                      : `/my-drive`
+                  }
+                >
+                  <Button variant="outline" size="icon">
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
+              <nav className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-1">
+                  <Link
+                    href="/my-drive"
                     className="text-foreground hover:text-primary transition-colors"
                   >
-                    {segment}
-                  </button>
-                  {index < currentPath.length - 1 && (
+                    My Drive
+                  </Link>
+                  {breadcrumbs.length > 0 && (
                     <ChevronRight className="text-muted-foreground h-4 w-4" />
                   )}
                 </div>
-              ))}
-            </nav>
+                {breadcrumbs.map((segment, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <Link
+                      href={`/my-drive/folders/${segment.id}`}
+                      className="text-foreground hover:text-primary transition-colors"
+                    >
+                      {segment.name}
+                    </Link>
+                    {index < breadcrumbs.length - 1 && (
+                      <ChevronRight className="text-muted-foreground h-4 w-4" />
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -202,7 +163,6 @@ export function DriveContent({
                         key={folder.id}
                         folder={folder}
                         viewMode="grid"
-                        handleFolderClick={() => navigateToFolder(folder)}
                       />
                     ))}
                   </ul>
@@ -226,12 +186,7 @@ export function DriveContent({
             // List view
             <ul className="space-y-2">
               {folders.map((folder) => (
-                <FolderRow
-                  key={folder.id}
-                  folder={folder}
-                  viewMode="list"
-                  handleFolderClick={() => navigateToFolder(folder)}
-                />
+                <FolderRow key={folder.id} folder={folder} viewMode="list" />
               ))}
               {files.map((file) => (
                 <FileRow key={file.id} file={file} viewMode="list" />
@@ -241,6 +196,7 @@ export function DriveContent({
 
         {folders.length === 0 && files.length === 0 && !dragOver && (
           <div className="flex h-full items-center justify-center">
+            <div>{JSON.stringify(folders)}</div>
             <div className="text-center">
               <div className="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
                 <HardDrive className="text-muted-foreground h-12 w-12" />

@@ -1,6 +1,8 @@
 import type { filesTable, foldersTable } from "~/server/db/schema";
 import type { ViewMode } from "./drive-content";
 import { FolderIcon, FileIcon as FileGlyph } from "lucide-react";
+import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 export type FileItem = typeof filesTable.$inferSelect;
 export type FolderItem = typeof foldersTable.$inferSelect;
@@ -14,20 +16,19 @@ export function FileRow({
 }) {
   return (
     <li>
-      <a
-        href={file.url}
-        target="_blank"
-        rel="noreferrer"
-        className={
+      <Link
+        href={`/my-drive/files/${file.id}`}
+        className={cn(
+          "block cursor-pointer rounded-lg transition-colors",
           viewMode === "grid"
-            ? "hover:bg-card block cursor-pointer rounded-lg p-4 text-center transition-colors"
-            : "hover:bg-card flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors"
-        }
+            ? "hover:bg-card block p-4 text-center"
+            : "hover:bg-card flex items-center gap-3 p-2",
+        )}
       >
         <FileGlyph
-          className={viewMode === "grid" ? "mx-auto h-12 w-12" : "h-5 w-5"}
+          className={cn(viewMode === "grid" ? "mx-auto h-12 w-12" : "h-5 w-5")}
         />
-        <div className={viewMode === "grid" ? "mt-2" : "flex-1"}>
+        <div className={cn(viewMode === "grid" ? "mt-2" : "flex-1")}>
           <p className="text-foreground truncate text-sm font-medium">
             {file.name}
           </p>
@@ -37,39 +38,38 @@ export function FileRow({
             </div>
           )}
         </div>
-      </a>
+      </Link>
     </li>
   );
 }
 
 export function FolderRow({
   folder,
-  handleFolderClick,
   viewMode,
 }: {
   folder: FolderItem;
-  handleFolderClick: () => void;
   viewMode: ViewMode;
 }) {
   return (
     <li>
-      <div
-        className={
+      <Link
+        href={`/my-drive/folders/${folder.id}`}
+        className={cn(
+          "cursor-pointer rounded-lg transition-colors",
           viewMode === "grid"
-            ? "hover:bg-card cursor-pointer rounded-lg p-4 text-center transition-colors"
-            : "hover:bg-card flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors"
-        }
-        onClick={handleFolderClick}
+            ? "hover:bg-card block p-4 text-center"
+            : "hover:bg-card flex items-center gap-3 p-2",
+        )}
       >
         <FolderIcon
-          className={viewMode === "grid" ? "mx-auto h-12 w-12" : "h-5 w-5"}
+          className={cn(viewMode === "grid" ? "mx-auto h-12 w-12" : "h-5 w-5")}
         />
-        <div className={viewMode === "grid" ? "mt-2" : "flex-1"}>
+        <div className={cn(viewMode === "grid" ? "mt-2" : "flex-1")}>
           <p className="text-foreground truncate text-sm font-medium">
             {folder.name}
           </p>
         </div>
-      </div>
+      </Link>
     </li>
   );
 }
