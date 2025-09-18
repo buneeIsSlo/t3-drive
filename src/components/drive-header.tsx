@@ -4,6 +4,7 @@ import { Search, HardDrive, Sun, Moon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useTheme } from "next-themes";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export function DriveHeader() {
   const { theme, setTheme } = useTheme();
@@ -39,8 +40,15 @@ export function DriveHeader() {
           <span className="sr-only">Toggle theme</span>
         </Button>
 
-        <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-full">
-          <span className="text-primary-foreground text-sm font-medium">U</span>
+        <div className="flex">
+          <SignedOut>
+            <Button asChild variant={"secondary"} className="text-primary">
+              <SignInButton />
+            </Button>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
     </header>
