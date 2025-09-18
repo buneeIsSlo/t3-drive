@@ -6,6 +6,7 @@ import {
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import type { FileItem } from "~/components/drive-item";
 
 export const QUERIES = {
   async getAlParentsForFolder(folderId: number) {
@@ -43,5 +44,21 @@ export const QUERIES = {
       .select()
       .from(filesSchema)
       .where(eq(filesSchema.parent, folderId));
+  },
+};
+
+export const MUTATIONS = {
+  createFile: async function (input: {
+    file: {
+      name: string;
+      size: number;
+      url: string;
+    };
+    userId: string;
+  }) {
+    return await db.insert(filesSchema).values({
+      ...input.file,
+      parent: 0,
+    });
   },
 };
