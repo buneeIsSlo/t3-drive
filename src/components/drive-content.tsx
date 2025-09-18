@@ -27,11 +27,17 @@ interface DriveContentProps {
   files: FileItem[];
   folders: FolderItem[];
   parents: FolderItem[]; // ordered from root to current
+  initialViewMode?: ViewMode;
 }
 
-export function DriveContent({ files, folders, parents }: DriveContentProps) {
+export function DriveContent({
+  files,
+  folders,
+  parents,
+  initialViewMode,
+}: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
   const breadcrumbs = parents;
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -104,14 +110,24 @@ export function DriveContent({ files, folders, parents }: DriveContentProps) {
             <Button
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="icon"
-              onClick={() => setViewMode("grid")}
+              onClick={() => {
+                setViewMode("grid");
+                try {
+                  document.cookie = `viewMode=grid; path=/; max-age=31536000`;
+                } catch {}
+              }}
             >
               <LayoutGrid className="h-4 w-4" />
             </Button>
             <Button
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="icon"
-              onClick={() => setViewMode("list")}
+              onClick={() => {
+                setViewMode("list");
+                try {
+                  document.cookie = `viewMode=list; path=/; max-age=31536000`;
+                } catch {}
+              }}
             >
               <List className="h-4 w-4" />
             </Button>
