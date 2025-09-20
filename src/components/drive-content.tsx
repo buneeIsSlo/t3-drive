@@ -19,8 +19,7 @@ import {
   type FileItem,
   type FolderItem,
 } from "~/components/drive-item";
-import { UploadButton } from "./uploadthing";
-import { useRouter } from "next/navigation";
+import UploadFilesButton from "./upload-files-button";
 
 export type ViewMode = "grid" | "list";
 
@@ -40,7 +39,6 @@ export function DriveContent({
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
   const breadcrumbs = parents;
-  const navigate = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -137,19 +135,7 @@ export function DriveContent({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* <Button
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-            asChild
-          >
-            <Upload className="mr-2 h-4 w-4" />
-            Upload */}
-          <UploadButton
-            endpoint={"imageUploader"}
-            onClientUploadComplete={() => {
-              navigate.refresh();
-            }}
-          />
-          {/* </Button> */}
+          <UploadFilesButton />
           <Button variant="outline">
             <FolderPlus className="mr-2 h-4 w-4" />
             New folder
