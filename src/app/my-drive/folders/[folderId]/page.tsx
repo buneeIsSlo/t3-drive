@@ -29,6 +29,7 @@ export default async function MyDriveFolderPage(props: {
           folders={folders}
           parents={parents}
           initialViewMode={initialViewMode}
+          folderId={folderId}
         />
       </div>
     </div>

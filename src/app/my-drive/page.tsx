@@ -6,8 +6,8 @@ import { cookies } from "next/headers";
 
 export default async function MyDriveRootPage() {
   const [files, folders] = await Promise.all([
-    QUERIES.getAllFiles(0),
-    QUERIES.getAllFolders(0),
+    QUERIES.getAllFiles(null),
+    QUERIES.getAllFolders(null),
   ]);
   const cookieStore = await cookies();
   const initialViewMode =
@@ -23,6 +23,7 @@ export default async function MyDriveRootPage() {
           folders={folders}
           parents={[]}
           initialViewMode={initialViewMode}
+          folderId={null}
         />
       </div>
     </div>
