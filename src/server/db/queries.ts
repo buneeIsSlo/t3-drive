@@ -5,8 +5,7 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
-import type { FileItem } from "~/components/drive-item";
+import { eq, isNull } from "drizzle-orm";
 
 export const QUERIES = {
   async getAlParentsForFolder(folderId: number) {
@@ -32,18 +31,35 @@ export const QUERIES = {
     return parents;
   },
 
-  async getAllFolders(folderId: number) {
+  async getAllFolders(folderId: number | null) {
     return db
       .select()
       .from(foldersSchema)
-      .where(eq(foldersSchema.parent, folderId));
+      .where(
+        folderId === null
+          ? isNull(foldersSchema.parent)
+          : eq(foldersSchema.parent, folderId),
+      );
   },
 
-  async getAllFiles(folderId: number) {
+  async getFolderById(folderId: number) {
+    const folder = await db
+      .select()
+      .from(foldersSchema)
+      .where(eq(foldersSchema.id, folderId));
+
+    return folder[0];
+  },
+
+  async getAllFiles(folderId: number | null) {
     return db
       .select()
       .from(filesSchema)
-      .where(eq(filesSchema.parent, folderId));
+      .where(
+        folderId === null
+          ? isNull(filesSchema.parent)
+          : eq(filesSchema.parent, folderId),
+      );
   },
 };
 
@@ -53,12 +69,13 @@ export const MUTATIONS = {
       name: string;
       size: number;
       url: string;
+      parent: number | null;
     };
     userId: string;
   }) {
     return await db.insert(filesSchema).values({
       ...input.file,
-      parent: 0,
+      ownerId: input.userId,
     });
   },
 };

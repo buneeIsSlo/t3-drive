@@ -5,9 +5,17 @@ import { Button } from "./ui/button";
 import { useCallback, useRef } from "react";
 import { useUploadThing } from "./uploadthing";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export default function UploadFilesButton() {
+interface UploadFilesButtonProps {
+  folderId: number | null;
+}
+
+export default function UploadFilesButton({
+  folderId,
+}: UploadFilesButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useRouter();
 
   const { startUpload, isUploading } = useUploadThing(
     (routerRegistry) => routerRegistry.imageUploader,
@@ -15,19 +23,24 @@ export default function UploadFilesButton() {
       uploadProgressGranularity: "fine",
 
       onUploadBegin: () => {
-        toast.loading("Uploading files...", { id: "upload-toast" });
+        toast.loading("Uploading files...", {
+          id: "upload-toast",
+          description: "",
+        });
       },
 
       onUploadProgress: (p: number) => {
-        toast.loading(`Uploading files... [${p}% ]`, {
+        toast.loading(`Uploading files... (${p}%)`, {
           id: "upload-toast",
           className: "w-full",
+          description: "",
         });
       },
 
       onClientUploadComplete: () => {
         toast.success("Upload complete", { id: "upload-toast" });
         if (fileInputRef.current) fileInputRef.current.value = "";
+        navigate.refresh();
       },
 
       onUploadError: (e) => {
@@ -44,9 +57,9 @@ export default function UploadFilesButton() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files ? Array.from(e.target.files) : [];
       if (files.length === 0) return;
-      await startUpload(files);
+      await startUpload(files, { folderId });
     },
-    [startUpload],
+    [startUpload, folderId],
   );
 
   return (
@@ -64,7 +77,7 @@ export default function UploadFilesButton() {
         ref={fileInputRef}
         className="sr-only"
         aria-label="Upload"
-        accept="image/*"
+        accept="*/*"
         multiple
         onChange={onFileChange}
       />

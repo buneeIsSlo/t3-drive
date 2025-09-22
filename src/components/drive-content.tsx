@@ -28,6 +28,7 @@ interface DriveContentProps {
   folders: FolderItem[];
   parents: FolderItem[]; // ordered from root to current
   initialViewMode?: ViewMode;
+  folderId: number | null;
 }
 
 export function DriveContent({
@@ -35,6 +36,7 @@ export function DriveContent({
   folders,
   parents,
   initialViewMode,
+  folderId = null,
 }: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
@@ -135,7 +137,7 @@ export function DriveContent({
         </div>
 
         <div className="flex items-center gap-2">
-          <UploadFilesButton />
+          <UploadFilesButton folderId={folderId} />
           <Button variant="outline">
             <FolderPlus className="mr-2 h-4 w-4" />
             New folder
@@ -209,7 +211,6 @@ export function DriveContent({
 
         {folders.length === 0 && files.length === 0 && !dragOver && (
           <div className="flex h-full items-center justify-center">
-            <div>{JSON.stringify(folders)}</div>
             <div className="text-center">
               <div className="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
                 <HardDrive className="text-muted-foreground h-12 w-12" />
