@@ -7,16 +7,6 @@ import { cn } from "~/lib/utils";
 export type FileItem = typeof filesTable.$inferSelect;
 export type FolderItem = typeof foldersTable.$inferSelect;
 
-function splitFileName(fileName: string) {
-  const lastDotIndex = fileName.lastIndexOf(".");
-  const hasExtension = lastDotIndex > 0 && lastDotIndex < fileName.length - 1;
-
-  return {
-    baseName: hasExtension ? fileName.slice(0, lastDotIndex) : fileName,
-    extension: hasExtension ? fileName.slice(lastDotIndex) : "",
-  };
-}
-
 export function FileRow({
   file,
   viewMode,
@@ -52,7 +42,7 @@ export function FileRow({
           </p>
           {!isGrid && file.size && (
             <div className="text-muted-foreground flex items-center gap-4 text-xs">
-              <span>{file.size}</span>
+              <span>{bytesToSize(file.size)}</span>
             </div>
           )}
         </div>
@@ -88,4 +78,24 @@ export function FolderRow({
       </Link>
     </li>
   );
+}
+
+function splitFileName(fileName: string) {
+  const lastDotIndex = fileName.lastIndexOf(".");
+  const hasExtension = lastDotIndex > 0 && lastDotIndex < fileName.length - 1;
+
+  return {
+    baseName: hasExtension ? fileName.slice(0, lastDotIndex) : fileName,
+    extension: hasExtension ? fileName.slice(lastDotIndex) : "",
+  };
+}
+
+function bytesToSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  const mb = kb / 1024;
+  if (mb < 1024) return `${mb.toFixed(1)} MB`;
+  const gb = mb / 1024;
+  return `${gb.toFixed(1)} GB`;
 }
