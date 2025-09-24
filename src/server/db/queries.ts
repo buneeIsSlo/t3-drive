@@ -78,4 +78,15 @@ export const MUTATIONS = {
       ownerId: input.userId,
     });
   },
+  createFolder: async function (input: {
+    name: string;
+    parent: number | null;
+    userId: string;
+  }) {
+    return await db.insert(foldersSchema).values({
+      name: input.name,
+      parent: input.parent,
+      ownerId: input.userId,
+    });
+  },
 };

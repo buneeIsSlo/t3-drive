@@ -20,6 +20,7 @@ import {
   type FolderItem,
 } from "~/components/drive-item";
 import UploadFilesButton from "./upload-files-button";
+import CreateNewFolderButton from "./create-new-folder-button";
 
 export type ViewMode = "grid" | "list";
 
@@ -138,10 +139,7 @@ export function DriveContent({
 
         <div className="flex items-center gap-2">
           <UploadFilesButton folderId={folderId} />
-          <Button variant="outline">
-            <FolderPlus className="mr-2 h-4 w-4" />
-            New folder
-          </Button>
+          <CreateNewFolderButton parentFolderId={folderId} />
         </div>
       </div>
 
