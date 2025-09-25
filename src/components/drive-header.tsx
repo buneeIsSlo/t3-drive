@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useTheme } from "next-themes";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export function DriveHeader() {
   const { theme, setTheme } = useTheme();
@@ -12,10 +13,10 @@ export function DriveHeader() {
   return (
     <header className="border-border bg-background flex h-16 items-center justify-between border-b px-6">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <HardDrive className="text-primary h-8 w-8" />
           <h1 className="text-foreground text-xl font-semibold">T3-Drive</h1>
-        </div>
+        </Link>
       </div>
 
       <div className="mx-8 max-w-2xl flex-1">
