@@ -4,46 +4,41 @@ import {
   FileSpreadsheet,
   Presentation,
   File,
-  Folder,
   Code,
   Music,
   Video,
   Archive,
-} from "lucide-react"
+} from "lucide-react";
 
 interface FileIconProps {
-  type: "file" | "folder"
-  name: string
-  size?: number
+  extension: string;
+  className?: string;
 }
 
-export function FileIcon({ type, name, size = 24 }: FileIconProps) {
-  if (type === "folder") {
-    return <Folder className={`h-${size / 4} w-${size / 4} text-accent`} style={{ width: size, height: size }} />
-  }
-
-  const extension = name.split(".").pop()?.toLowerCase()
+export function FileTypeIcon({ extension, className }: FileIconProps) {
+  const ext = extension.toLowerCase().replace(".", "");
+  console.log(ext);
 
   const getFileIcon = () => {
-    switch (extension) {
+    switch (ext) {
       case "pdf":
       case "doc":
       case "docx":
       case "txt":
-        return <FileText className="text-blue-500" style={{ width: size, height: size }} />
+        return <FileText className={className} />;
       case "jpg":
       case "jpeg":
       case "png":
       case "gif":
       case "svg":
-        return <ImageIcon className="text-green-500" style={{ width: size, height: size }} />
+        return <ImageIcon className={className} />;
       case "xls":
       case "xlsx":
       case "csv":
-        return <FileSpreadsheet className="text-emerald-500" style={{ width: size, height: size }} />
+        return <FileSpreadsheet className={className} />;
       case "ppt":
       case "pptx":
-        return <Presentation className="text-orange-500" style={{ width: size, height: size }} />
+        return <Presentation className={className} />;
       case "js":
       case "ts":
       case "jsx":
@@ -52,23 +47,23 @@ export function FileIcon({ type, name, size = 24 }: FileIconProps) {
       case "css":
       case "sql":
       case "fig":
-        return <Code className="text-purple-500" style={{ width: size, height: size }} />
+        return <Code className={className} />;
       case "mp3":
       case "wav":
       case "flac":
-        return <Music className="text-pink-500" style={{ width: size, height: size }} />
+        return <Music className={className} />;
       case "mp4":
       case "avi":
       case "mov":
-        return <Video className="text-red-500" style={{ width: size, height: size }} />
+        return <Video className={className} />;
       case "zip":
       case "rar":
       case "7z":
-        return <Archive className="text-yellow-500" style={{ width: size, height: size }} />
+        return <Archive className={className} />;
       default:
-        return <File className="text-muted-foreground" style={{ width: size, height: size }} />
+        return <File className={className} />;
     }
-  }
+  };
 
-  return getFileIcon()
+  return getFileIcon();
 }

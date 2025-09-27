@@ -1,8 +1,9 @@
 import type { filesTable, foldersTable } from "~/server/db/schema";
 import type { ViewMode } from "./drive-content";
-import { FolderIcon, FileIcon as FileGlyph } from "lucide-react";
+import { FolderIcon } from "lucide-react";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
+import { FileTypeIcon } from "./file-icon";
 
 export type FileItem = typeof filesTable.$inferSelect;
 export type FolderItem = typeof foldersTable.$inferSelect;
@@ -27,7 +28,11 @@ export function FileRow({
         )}
         title={file.name}
       >
-        <FileGlyph className={cn(isGrid ? "mx-auto h-12 w-12" : "h-5 w-5")} />
+        <FileTypeIcon
+          key={file.id}
+          extension={extension}
+          className={cn(isGrid ? "mx-auto h-12 w-12" : "h-5 w-5")}
+        />
         <div className={cn(isGrid ? "mt-2" : "flex-1")}>
           <p
             className={cn(
