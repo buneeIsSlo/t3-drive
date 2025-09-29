@@ -5,10 +5,10 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 export const QUERIES = {
-  async getAlParentsForFolder(folderId: number) {
+  async getAlParentsForFolder(userId: string, folderId: number) {
     const parents = [];
     let currentId: number | null = folderId;
 
@@ -16,7 +16,12 @@ export const QUERIES = {
       const rows = await db
         .select()
         .from(foldersSchema)
-        .where(eq(foldersSchema.id, currentId));
+        .where(
+          and(
+            eq(foldersSchema.id, currentId),
+            eq(foldersSchema.ownerId, userId),
+          ),
+        );
 
       const row = rows[0];
       if (!row) break;
@@ -31,14 +36,17 @@ export const QUERIES = {
     return parents;
   },
 
-  async getAllFolders(folderId: number | null) {
+  async getAllFolders(userId: string, folderId: number | null) {
     return db
       .select()
       .from(foldersSchema)
       .where(
-        folderId === null
-          ? isNull(foldersSchema.parent)
-          : eq(foldersSchema.parent, folderId),
+        and(
+          eq(foldersSchema.ownerId, userId),
+          folderId === null
+            ? isNull(foldersSchema.parent)
+            : eq(foldersSchema.parent, folderId),
+        ),
       );
   },
 
@@ -51,14 +59,17 @@ export const QUERIES = {
     return folder[0];
   },
 
-  async getAllFiles(folderId: number | null) {
+  async getAllFiles(userId: string, folderId: number | null) {
     return db
       .select()
       .from(filesSchema)
       .where(
-        folderId === null
-          ? isNull(filesSchema.parent)
-          : eq(filesSchema.parent, folderId),
+        and(
+          eq(filesSchema.ownerId, userId),
+          folderId === null
+            ? isNull(filesSchema.parent)
+            : eq(filesSchema.parent, folderId),
+        ),
       );
   },
 };
