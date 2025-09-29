@@ -1,6 +1,6 @@
-import { DriveContent } from "~/components/drive-content";
-import { DriveHeader } from "~/components/drive-header";
-import { DriveSidebar } from "~/components/drive-sidebar";
+import { DriveContent } from "~/app/my-drive/components/drive-content";
+import { DriveHeader } from "~/app/my-drive/components/drive-header";
+import { DriveSidebar } from "~/app/my-drive/components/drive-sidebar";
 import { QUERIES } from "~/server/db/queries";
 import { cookies } from "next/headers";
 

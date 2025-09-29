@@ -18,7 +18,7 @@ import {
   FolderRow,
   type FileItem,
   type FolderItem,
-} from "~/components/drive-item";
+} from "~/app/my-drive/components/drive-item";
 import UploadFilesButton from "./upload-files-button";
 import CreateNewFolderButton from "./create-new-folder-button";
 

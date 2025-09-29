@@ -1,9 +1,9 @@
 "use client";
 
 import { Upload } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 import { useCallback, useRef } from "react";
-import { useUploadThing } from "./uploadthing";
+import { useUploadThing } from "../../../components/uploadthing";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
