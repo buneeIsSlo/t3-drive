@@ -60,7 +60,7 @@ export function DriveContent({
   };
 
   return (
-    <main className="relative flex flex-1 flex-col overflow-hidden">
+    <main className="flex flex-1 flex-col">
       {/* Toolbar */}
       <div className="border-border bg-background border-b p-4">
         <div className="mb-4 flex items-center justify-between">
@@ -196,46 +196,56 @@ export function DriveContent({
             </div>
           ) : (
             // List view
-            <table className="bg-background w-full table-fixed border-separate border-spacing-0 overflow-scroll">
-              <colgroup>
-                <col className="w-[60%]" />
-                <col className="w-[24%]" />
-                <col className="w-[16%]" />
-              </colgroup>
-              <thead className="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 left-0 z-20 backdrop-blur">
-                <tr className="border-b-4 border-b-red-500">
-                  <th
-                    scope="col"
-                    className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
-                  >
-                    Date Created
-                  </th>
-                  <th
-                    scope="col"
-                    className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
-                  >
-                    Size
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="w-full">
-                {folders.map((folder) => (
-                  <FolderRow key={folder.id} folder={folder} viewMode="list" />
-                ))}
-                {folders.map((folder) => (
-                  <FolderRow key={folder.id} folder={folder} viewMode="list" />
-                ))}
-                {files.map((file) => (
-                  <FileRow key={file.id} file={file} viewMode="list" />
-                ))}
-              </tbody>
-            </table>
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <colgroup>
+                  <col className="w-[60%]" />
+                  <col className="w-[24%]" />
+                  <col className="w-[16%]" />
+                  <col className="w-[1%]" />
+                </colgroup>
+                <thead className="bg-background/80 supports-[backdrop-filter]:bg-background/60">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
+                    >
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
+                    >
+                      Created
+                    </th>
+                    <th
+                      scope="col"
+                      className="text-muted-foreground px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase"
+                    >
+                      Size
+                    </th>
+                    <th
+                      scope="col"
+                      className="text-muted-foreground px-3 py-3 text-right text-xs font-semibold tracking-wider uppercase"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="w-full">
+                  {folders.map((folder) => (
+                    <FolderRow
+                      key={folder.id}
+                      folder={folder}
+                      viewMode="list"
+                    />
+                  ))}
+                  {files.map((file) => (
+                    <FileRow key={file.id} file={file} viewMode="list" />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ))}
 
         {folders.length === 0 && files.length === 0 && !dragOver && (
