@@ -5,7 +5,7 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 
 export const QUERIES = {
   async getAlParentsForFolder(userId: string, folderId: number) {
@@ -47,7 +47,8 @@ export const QUERIES = {
             ? isNull(foldersSchema.parent)
             : eq(foldersSchema.parent, folderId),
         ),
-      );
+      )
+      .orderBy(asc(foldersSchema.createdAt));
   },
 
   async getFolderById(folderId: number) {
@@ -70,7 +71,8 @@ export const QUERIES = {
             ? isNull(filesSchema.parent)
             : eq(filesSchema.parent, folderId),
         ),
-      );
+      )
+      .orderBy(asc(filesSchema.createdAt));
   },
 };
 
