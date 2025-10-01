@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -6,8 +8,14 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { MoreVertical, Star, Trash } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { toast } from "sonner";
+import { deleteFile } from "../actions";
 
-export function DriveItemMenu() {
+interface DriveItemMenuProps {
+  fileId?: number;
+}
+
+export function DriveItemMenu({ fileId }: DriveItemMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,7 +28,20 @@ export function DriveItemMenu() {
           <Star className="mr-2 h-4 w-4" />
           Star
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => {
+            if (!fileId) return;
+            toast.promise(deleteFile(fileId), {
+              loading: "Deleting file...",
+              success: "File deleted",
+              error: (err: unknown) => {
+                const message = err instanceof Error ? err.message : undefined;
+                return message ?? "Failed to delete file";
+              },
+            });
+          }}
+        >
           <Trash className="mr-2 h-4 w-4" />
           Delete
         </DropdownMenuItem>
