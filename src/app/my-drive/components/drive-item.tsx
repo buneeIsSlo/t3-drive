@@ -130,7 +130,7 @@ export function FolderRow({
         </td>
         <td className="p-2 text-right align-middle">
           <div className="pointer-events-none relative z-10 flex items-center justify-end">
-            <DriveItemMenu />
+            <DriveItemMenu folderId={folder.id} />
           </div>
         </td>
         <Link
@@ -157,7 +157,7 @@ export function FolderRow({
         </div>
       </Link>
       <div className="absolute top-2 right-2 z-20 opacity-0 transition-opacity group-hover:opacity-100">
-        <DriveItemMenu />
+        <DriveItemMenu folderId={folder.id} />
       </div>
     </li>
   );

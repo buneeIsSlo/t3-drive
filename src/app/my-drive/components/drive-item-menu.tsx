@@ -9,13 +9,36 @@ import {
 import { MoreVertical, Star, Trash } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
-import { deleteFile } from "../actions";
+import { deleteFile, deleteFolder } from "../actions";
 
 interface DriveItemMenuProps {
   fileId?: number;
+  folderId?: number;
 }
 
-export function DriveItemMenu({ fileId }: DriveItemMenuProps) {
+export function DriveItemMenu({ fileId, folderId }: DriveItemMenuProps) {
+  const handleDelete = () => {
+    if (fileId) {
+      toast.promise(deleteFile(fileId), {
+        loading: "Deleting file...",
+        success: "File deleted",
+        error: (err: unknown) => {
+          const message = err instanceof Error ? err.message : undefined;
+          return message ?? "Failed to delete file";
+        },
+      });
+    } else if (folderId) {
+      toast.promise(deleteFolder(folderId), {
+        loading: "Deleting folder...",
+        success: "Folder deleted",
+        error: (err: unknown) => {
+          const message = err instanceof Error ? err.message : undefined;
+          return message ?? "Failed to delete folder";
+        },
+      });
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -28,20 +51,7 @@ export function DriveItemMenu({ fileId }: DriveItemMenuProps) {
           <Star className="mr-2 h-4 w-4" />
           Star
         </DropdownMenuItem>
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => {
-            if (!fileId) return;
-            toast.promise(deleteFile(fileId), {
-              loading: "Deleting file...",
-              success: "File deleted",
-              error: (err: unknown) => {
-                const message = err instanceof Error ? err.message : undefined;
-                return message ?? "Failed to delete file";
-              },
-            });
-          }}
-        >
+        <DropdownMenuItem variant="destructive" onClick={handleDelete}>
           <Trash className="mr-2 h-4 w-4" />
           Delete
         </DropdownMenuItem>
