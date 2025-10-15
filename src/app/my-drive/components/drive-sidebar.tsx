@@ -1,18 +1,17 @@
-import { HardDrive, Users, Clock, Star, Trash2, Cloud } from "lucide-react";
+import { HardDrive, Clock, Star, Trash2, Cloud } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Progress } from "~/components/ui/progress";
 
 export function DriveSidebar() {
   const sidebarItems = [
     { icon: HardDrive, label: "My Drive", active: true },
-    { icon: Users, label: "Shared with me" },
     { icon: Clock, label: "Recent" },
     { icon: Star, label: "Starred" },
     { icon: Trash2, label: "Trash" },
   ];
 
   return (
-    <aside className="border-sidebar-border bg-sidebar flex w-64 flex-col border-r p-4">
+    <aside className="border-sidebar-border bg-sidebar w-64 flex-col border-r p-4 hidden md:flex">
       <nav className="flex-1 space-y-1">
         {sidebarItems.map((item) => (
           <Button
