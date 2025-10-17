@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
+import { SearchProvider } from "~/context/search-context";
 
 export default async function DriveLayout({
   children,
@@ -12,5 +13,5 @@ export default async function DriveLayout({
   if (!session.userId) {
     redirect("/");
   }
-  return <React.Fragment>{children}</React.Fragment>;
+  return <SearchProvider>{children}</SearchProvider>;
 }

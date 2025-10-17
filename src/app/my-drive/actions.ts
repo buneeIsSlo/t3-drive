@@ -5,10 +5,25 @@ import { and, eq, inArray } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { UTApi } from "uploadthing/server";
 import { db } from "~/server/db";
-import { MUTATIONS } from "~/server/db/queries";
+import { MUTATIONS, QUERIES } from "~/server/db/queries";
 import { filesTable, foldersTable } from "~/server/db/schema";
 
 const utApi = new UTApi();
+
+export async function searchAction(query: string) {
+  const user = await auth();
+  if (!user.userId) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (!query) {
+    return { success: true, data: { files: [], folders: [] } };
+  }
+
+  const results = await QUERIES.searchFilesAndFolders(user.userId, query);
+
+  return { success: true, data: results };
+}
 
 export async function createNewFolder(
   name: string,

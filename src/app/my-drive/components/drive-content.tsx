@@ -20,6 +20,7 @@ import {
 } from "~/app/my-drive/components/drive-item";
 import UploadFilesButton from "./upload-files-button";
 import CreateNewFolderButton from "./create-new-folder-button";
+import { useSearch } from "~/context/search-context";
 
 export type ViewMode = "grid" | "list";
 
@@ -32,15 +33,19 @@ interface DriveContentProps {
 }
 
 export function DriveContent({
-  files,
-  folders,
+  files: initialFiles,
+  folders: initialFolders,
   parents,
   initialViewMode,
   folderId = null,
 }: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
-  const breadcrumbs = parents;
+  const { searchResults } = useSearch();
+
+  const isSearching = searchResults !== null;
+  const displayFiles = searchResults ? searchResults.files : initialFiles;
+  const displayFolders = searchResults ? searchResults.folders : initialFolders;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -65,47 +70,52 @@ export function DriveContent({
       <div className="border-border bg-background border-b p-4">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              {breadcrumbs.length > 0 && (
-                <Link
-                  href={
-                    breadcrumbs.length > 1
-                      ? `/my-drive/folders/${breadcrumbs[breadcrumbs.length - 2]!.id}`
-                      : `/my-drive`
-                  }
-                >
-                  <Button variant="outline" size="icon">
-                    <ArrowLeft className="h-4 w-4" />
-                  </Button>
-                </Link>
-              )}
-              <nav className="flex items-center gap-1 text-sm">
-                <div className="flex items-center gap-1">
+            {!isSearching && (
+              <div className="flex items-center gap-2">
+                {parents.length > 0 && (
                   <Link
-                    href="/my-drive"
-                    className="text-foreground hover:text-primary transition-colors"
+                    href={
+                      parents.length > 1
+                        ? `/my-drive/folders/${parents[parents.length - 2]!.id}`
+                        : `/my-drive`
+                    }
                   >
-                    My Drive
+                    <Button variant="outline" size="icon">
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
                   </Link>
-                  {breadcrumbs.length > 0 && (
-                    <ChevronRight className="text-muted-foreground h-4 w-4" />
-                  )}
-                </div>
-                {breadcrumbs.map((segment, index) => (
-                  <div key={index} className="flex items-center gap-1">
+                )}
+                <nav className="flex items-center gap-1 text-sm">
+                  <div className="flex items-center gap-1">
                     <Link
-                      href={`/my-drive/folders/${segment.id}`}
+                      href="/my-drive"
                       className="text-foreground hover:text-primary transition-colors"
                     >
-                      {segment.name}
+                      My Drive
                     </Link>
-                    {index < breadcrumbs.length - 1 && (
+                    {parents.length > 0 && (
                       <ChevronRight className="text-muted-foreground h-4 w-4" />
                     )}
                   </div>
-                ))}
-              </nav>
-            </div>
+                  {parents.map((segment, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      <Link
+                        href={`/my-drive/folders/${segment.id}`}
+                        className="text-foreground hover:text-primary transition-colors"
+                      >
+                        {segment.name}
+                      </Link>
+                      {index < parents.length - 1 && (
+                        <ChevronRight className="text-muted-foreground h-4 w-4" />
+                      )}
+                    </div>
+                  ))}
+                </nav>
+              </div>
+            )}
+            {isSearching && (
+              <h2 className="text-lg font-semibold">Search Results</h2>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -136,10 +146,12 @@ export function DriveContent({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <UploadFilesButton folderId={folderId} />
-          <CreateNewFolderButton parentFolderId={folderId} />
-        </div>
+        {!isSearching && (
+          <div className="flex items-center gap-2">
+            <UploadFilesButton folderId={folderId} />
+            <CreateNewFolderButton parentFolderId={folderId} />
+          </div>
+        )}
       </div>
 
       {/* Content Area */}
@@ -149,7 +161,7 @@ export function DriveContent({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {dragOver && (
+        {dragOver && !isSearching && (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <Upload className="text-primary mx-auto mb-4 h-12 w-12" />
@@ -164,13 +176,13 @@ export function DriveContent({
           (viewMode === "grid" ? (
             // Grid view
             <div className="space-y-8">
-              {folders.length > 0 && (
+              {displayFolders.length > 0 && (
                 <section>
                   <h3 className="text-muted-foreground mb-3 text-sm font-semibold">
                     Folders
                   </h3>
                   <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                    {folders.map((folder) => (
+                    {displayFolders.map((folder) => (
                       <FolderRow
                         key={folder.id}
                         folder={folder}
@@ -181,13 +193,13 @@ export function DriveContent({
                 </section>
               )}
 
-              {files.length > 0 && (
+              {displayFiles.length > 0 && (
                 <section>
                   <h3 className="text-muted-foreground mb-3 text-sm font-semibold">
                     Files
                   </h3>
                   <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                    {files.map((file) => (
+                    {displayFiles.map((file) => (
                       <FileRow key={file.id} file={file} viewMode="grid" />
                     ))}
                   </ul>
@@ -233,14 +245,14 @@ export function DriveContent({
                   </tr>
                 </thead>
                 <tbody className="w-full">
-                  {folders.map((folder) => (
+                  {displayFolders.map((folder) => (
                     <FolderRow
                       key={folder.id}
                       folder={folder}
                       viewMode="list"
                     />
                   ))}
-                  {files.map((file) => (
+                  {displayFiles.map((file) => (
                     <FileRow key={file.id} file={file} viewMode="list" />
                   ))}
                 </tbody>
@@ -248,18 +260,20 @@ export function DriveContent({
             </div>
           ))}
 
-        {folders.length === 0 && files.length === 0 && !dragOver && (
+        {displayFolders.length === 0 && displayFiles.length === 0 && !dragOver && (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <div className="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
                 <HardDrive className="text-muted-foreground h-12 w-12" />
               </div>
               <p className="text-foreground mb-2 text-lg font-medium">
-                This folder is empty
+                {isSearching ? "No results" : "This folder is empty"}
               </p>
-              <p className="text-muted-foreground">
-                Drop files here or use the upload button to add content
-              </p>
+              {!isSearching && (
+                <p className="text-muted-foreground">
+                  Drop files here or use the upload button to add content
+                </p>
+              )}
             </div>
           </div>
         )}

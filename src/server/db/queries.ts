@@ -5,7 +5,7 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull, like } from "drizzle-orm";
 
 export const QUERIES = {
   async getAlParentsForFolder(userId: string, folderId: number) {
@@ -73,6 +73,32 @@ export const QUERIES = {
         ),
       )
       .orderBy(asc(filesSchema.createdAt));
+  },
+
+  async searchFilesAndFolders(userId: string, searchQuery: string) {
+    const files = await db
+      .select()
+      .from(filesSchema)
+      .where(
+        and(
+          eq(filesSchema.ownerId, userId),
+          like(filesSchema.name, `%${searchQuery}%`),
+        ),
+      )
+      .orderBy(asc(filesSchema.createdAt));
+
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(
+          eq(foldersSchema.ownerId, userId),
+          like(foldersSchema.name, `%${searchQuery}%`),
+        ),
+      )
+      .orderBy(asc(foldersSchema.createdAt));
+
+    return { files, folders };
   },
 };
 
