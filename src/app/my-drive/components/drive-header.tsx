@@ -6,27 +6,11 @@ import { Input } from "~/components/ui/input";
 import { useTheme } from "next-themes";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { useState } from "react";
 import { useSearch } from "~/context/search-context";
 
 export function DriveHeader() {
   const { theme, setTheme } = useTheme();
-  const [query, setQuery] = useState("");
-  const { isSearching, noResults, performSearch, clearSearch } = useSearch();
-
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      performSearch(query);
-    }
-  };
-
-  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value;
-    setQuery(newQuery);
-    if (newQuery === "") {
-      clearSearch();
-    }
-  };
+  const { query, setQuery, isSearching } = useSearch();
 
   return (
     <header className="border-border bg-background flex h-16 items-center justify-between border-b px-6">
@@ -39,25 +23,17 @@ export function DriveHeader() {
 
       <div className="mx-8 max-w-2xl flex-1">
         <div className="relative">
-          <div className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform">
-            {isSearching ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Search />
-            )}
-          </div>
+          {isSearching ? (
+            <Loader2 className="animate-spin absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-primary" />
+          ) : (
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+          )}
           <Input
             placeholder="Search in Drive"
             className="bg-muted focus-visible:ring-ring border-0 pl-10 focus-visible:ring-1"
             value={query}
-            onChange={handleQueryChange}
-            onKeyDown={handleSearch}
+            onChange={(e) => setQuery(e.target.value)}
           />
-          {noResults && query !== "" && (
-            <p className="text-muted-foreground absolute top-full mt-1.5 text-xs">
-              No results found for "{query}".
-            </p>
-          )}
         </div>
       </div>
 

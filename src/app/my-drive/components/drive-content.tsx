@@ -41,11 +41,11 @@ export function DriveContent({
 }: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
-  const { searchResults } = useSearch();
-
-  const isSearching = searchResults !== null;
-  const displayFiles = searchResults ? searchResults.files : initialFiles;
-  const displayFolders = searchResults ? searchResults.folders : initialFolders;
+  const { results, isSearching, query, isSearchActive } = useSearch();
+  const hasSearchResults = results !== null;
+  const displayFiles = (hasSearchResults && results) ? results.files : initialFiles;
+  const displayFolders = (hasSearchResults && results) ? results.folders : initialFolders;
+  const showNoResults = isSearchActive && !isSearching && results === null;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -70,7 +70,7 @@ export function DriveContent({
       <div className="border-border bg-background border-b p-4">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {!isSearching && (
+            {!hasSearchResults && (
               <div className="flex items-center gap-2">
                 {parents.length > 0 && (
                   <Link
@@ -113,7 +113,7 @@ export function DriveContent({
                 </nav>
               </div>
             )}
-            {isSearching && (
+            {hasSearchResults && (
               <h2 className="text-lg font-semibold">Search Results</h2>
             )}
           </div>
@@ -146,12 +146,10 @@ export function DriveContent({
           </div>
         </div>
 
-        {!isSearching && (
           <div className="flex items-center gap-2">
             <UploadFilesButton folderId={folderId} />
             <CreateNewFolderButton parentFolderId={folderId} />
           </div>
-        )}
       </div>
 
       {/* Content Area */}
@@ -161,7 +159,7 @@ export function DriveContent({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        {dragOver && !isSearching && (
+        {dragOver && !hasSearchResults && (
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <Upload className="text-primary mx-auto mb-4 h-12 w-12" />
@@ -267,9 +265,9 @@ export function DriveContent({
                 <HardDrive className="text-muted-foreground h-12 w-12" />
               </div>
               <p className="text-foreground mb-2 text-lg font-medium">
-                {isSearching ? "No results" : "This folder is empty"}
+                {showNoResults ? `No results for "${query}"` : "This folder is empty"}
               </p>
-              {!isSearching && (
+              {!hasSearchResults && (
                 <p className="text-muted-foreground">
                   Drop files here or use the upload button to add content
                 </p>
