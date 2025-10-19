@@ -1,16 +1,15 @@
 "use client";
 
-import { Search, HardDrive, Sun, Moon, Loader2 } from "lucide-react";
+import { Search, HardDrive, Sun, Moon } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { useTheme } from "next-themes";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { useSearch } from "~/context/search-context";
+import { useGlobalSearch } from "~/context/global-search-context";
 
 export function DriveHeader() {
   const { theme, setTheme } = useTheme();
-  const { query, setQuery, isSearching } = useSearch();
+  const { openSearch } = useGlobalSearch();
 
   return (
     <header className="border-border bg-background flex h-16 items-center justify-between border-b px-6">
@@ -22,19 +21,17 @@ export function DriveHeader() {
       </div>
 
       <div className="mx-8 max-w-2xl flex-1">
-        <div className="relative">
-          {isSearching ? (
-            <Loader2 className="animate-spin absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-primary" />
-          ) : (
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
-          )}
-          <Input
-            placeholder="Search in Drive"
-            className="bg-muted focus-visible:ring-ring border-0 pl-10 focus-visible:ring-1"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+        <Button
+          variant="outline"
+          className="bg-muted hover:bg-muted/80 w-full justify-start text-muted-foreground"
+          onClick={openSearch}
+        >
+          <Search className="mr-2 h-4 w-4" />
+          Search in Drive
+          <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </Button>
       </div>
 
       <div className="flex items-center gap-2">

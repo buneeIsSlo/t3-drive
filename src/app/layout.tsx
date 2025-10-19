@@ -8,6 +8,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { Toaster } from "~/components/sonnter-toaster";
+import { GlobalSearchProvider } from "~/context/global-search-context";
 
 export const metadata: Metadata = {
   title: "T3-Drive",
@@ -33,7 +34,9 @@ export default function RootLayout({
             defaultTheme="light"
             disableTransitionOnChange
           >
-            {children}
+            <GlobalSearchProvider>
+              {children}
+            </GlobalSearchProvider>
             <Toaster />
           </ThemeProvider>
         </body>
