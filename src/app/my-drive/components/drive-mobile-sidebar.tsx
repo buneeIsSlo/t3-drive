@@ -1,6 +1,7 @@
 "use client";
-import { HardDrive, Clock, Star, Trash2, Cloud } from "lucide-react";
+import { HardDrive, Clock, Star, Trash2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { StorageIndicator } from "./storage-indicator";
 
 export function DriveMobileSidebar() {
 
@@ -29,10 +30,7 @@ export function DriveMobileSidebar() {
       </nav>
 
       <div className="mt-auto w-full px-1 pb-1">
-        <div className="text-muted-foreground flex flex-col items-center justify-center gap-1.5 text-[10px]">
-          <Cloud className="h-3.5 w-3.5" />
-          <span>9.7 GB / 15 GB</span>
-        </div>
+        <StorageIndicator variant="mobile" />
       </div>
     </aside>
   );

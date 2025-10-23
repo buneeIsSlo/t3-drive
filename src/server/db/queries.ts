@@ -5,7 +5,7 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { and, asc, eq, isNull, like } from "drizzle-orm";
+import { and, asc, eq, isNull, like, sql } from "drizzle-orm";
 
 export const QUERIES = {
   async getAlParentsForFolder(userId: string, folderId: number) {
@@ -100,6 +100,21 @@ export const QUERIES = {
 
     return { files, folders };
   },
+
+  async getUserStorageUsed(userId: string): Promise<number>{
+    try {
+  const result = await db
+  .select({totalSize: sql<number>`SUM(${filesSchema.size})`})
+  .from(filesSchema)
+  .where(eq(filesSchema.ownerId, userId));
+
+  return result[0]?.totalSize ?? 0;
+    }
+    catch(error) {
+      console.error("Error fetching user storage usage: ", error);
+      return 0;
+    }
+  }
 };
 
 export const MUTATIONS = {
