@@ -6,6 +6,8 @@ import { useCallback, useRef } from "react";
 import { useUploadThing } from "../../../components/uploadthing";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { TOTAL_STORAGE } from "./storage-indicator";
+import { useStorage } from "~/context/storage-context";
 
 interface UploadFilesButtonProps {
   folderId: number | null;
@@ -16,6 +18,9 @@ export default function UploadFilesButton({
 }: UploadFilesButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useRouter();
+  const { userStorageUsed, refetchStorage } = useStorage();
+
+  const isStorageAvailable = userStorageUsed < TOTAL_STORAGE;
 
   const { startUpload, isUploading } = useUploadThing(
     (routerRegistry) => routerRegistry.imageUploader,
@@ -41,6 +46,7 @@ export default function UploadFilesButton({
         toast.success("Upload complete", { id: "upload-toast" });
         if (fileInputRef.current) fileInputRef.current.value = "";
         navigate.refresh();
+        refetchStorage();
       },
 
       onUploadError: (e) => {
@@ -57,6 +63,7 @@ export default function UploadFilesButton({
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files ? Array.from(e.target.files) : [];
       if (files.length === 0) return;
+
       await startUpload(files, { folderId });
     },
     [startUpload, folderId],
@@ -66,7 +73,16 @@ export default function UploadFilesButton({
     <div className="relative inline-block">
       <Button
         className="bg-primary hover:bg-primary/90 text-primary-foreground"
-        onClick={() => fileInputRef.current?.click()}
+        onClick={() => {
+          if (!isStorageAvailable) {
+            toast.error("Upload Failed", {
+              description:
+                "You’ve reached your storage limit and cannot upload more files.",
+            });
+            return;
+          }
+          fileInputRef.current?.click();
+        }}
         disabled={isUploading}
       >
         <Upload className="mr-2 h-4 w-4" />

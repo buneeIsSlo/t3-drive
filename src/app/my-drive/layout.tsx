@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { StorageProvider } from "~/context/storage-context";
 
 export default async function DriveLayout({
   children,
@@ -11,5 +12,5 @@ export default async function DriveLayout({
   if (!session.userId) {
     redirect("/");
   }
-  return children;
+  return <StorageProvider>{children}</StorageProvider>;
 }
