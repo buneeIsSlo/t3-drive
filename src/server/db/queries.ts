@@ -143,4 +143,16 @@ export const MUTATIONS = {
       ownerId: input.userId,
     });
   },
+  renameFile: async function (input: { id: number; name: string }) {
+    return await db
+      .update(filesSchema)
+      .set({ name: input.name })
+      .where(eq(filesSchema.id, input.id));
+  },
+  renameFolder: async function (input: { id: number; name: string }) {
+    return await db
+      .update(foldersSchema)
+      .set({ name: input.name })
+      .where(eq(foldersSchema.id, input.id));
+  },
 };

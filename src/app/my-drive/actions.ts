@@ -197,3 +197,30 @@ export async function deleteFolder(folderId: number) {
     throw error;
   }
 }
+
+export async function renameItem(input: {
+  id: number;
+  type: "file" | "folder";
+  name: string;
+}) {
+  const user = await auth();
+
+  if (!user.userId) {
+    throw new Error("User not found");
+  }
+
+  if (input.name.length > 64) {
+    throw new Error("Name is too long (max 64 characters)");
+  }
+
+  if (input.type === "file") {
+    await MUTATIONS.renameFile({ id: input.id, name: input.name });
+  } else {
+    await MUTATIONS.renameFolder({ id: input.id, name: input.name });
+  }
+
+  const forceRefreshCookie = await cookies();
+  forceRefreshCookie.set("force-refresh", JSON.stringify(Math.random()));
+
+  return { success: true } as const;
+}

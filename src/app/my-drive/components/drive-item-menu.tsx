@@ -1,22 +1,28 @@
 "use client";
 
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
-import { MoreVertical, Star, Trash } from "lucide-react";
+import { FilePenLine, MoreVertical, Star, Trash } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import { deleteFile, deleteFolder } from "../actions";
+import RenameItemDialog from "./rename-item-dialog";
 
 interface DriveItemMenuProps {
   fileId?: number;
   folderId?: number;
+  name: string;
 }
 
-export function DriveItemMenu({ fileId, folderId }: DriveItemMenuProps) {
+export function DriveItemMenu({ fileId, folderId, name }: DriveItemMenuProps) {
+  const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
   const handleDelete = () => {
     if (fileId) {
       toast.promise(deleteFile(fileId), {
@@ -40,22 +46,40 @@ export function DriveItemMenu({ fileId, folderId }: DriveItemMenuProps) {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="pointer-events-auto">
-          <MoreVertical className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>
-          <Star className="mr-2 h-4 w-4" />
-          Star
-        </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-          <Trash className="mr-2 h-4 w-4" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <React.Fragment>
+      <RenameItemDialog
+        id={fileId ?? folderId!}
+        type={fileId ? "file" : "folder"}
+        name={name}
+        open={isRenameDialogOpen}
+        onOpenChange={setRenameDialogOpen}
+      />
+      <DropdownMenu open={isMenuOpen} onOpenChange={setMenuOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="pointer-events-auto">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <Star className="mr-2 h-4 w-4" />
+            Star
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              setRenameDialogOpen(true);
+              setMenuOpen(false);
+            }}
+          >
+            <FilePenLine className="mr-2 h-4 w-4" />
+            Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </React.Fragment>
   );
 }
