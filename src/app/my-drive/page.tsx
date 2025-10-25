@@ -1,7 +1,4 @@
 import { DriveContent } from "~/app/my-drive/components/drive-content";
-import { DriveHeader } from "~/app/my-drive/components/drive-header";
-import { DriveSidebar } from "~/app/my-drive/components/drive-sidebar";
-import { DriveMobileSidebar } from "~/app/my-drive/components/drive-mobile-sidebar";
 import { QUERIES } from "~/server/db/queries";
 import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
@@ -19,19 +16,12 @@ export default async function MyDriveRootPage() {
     cookieStore.get("viewMode")?.value === "list" ? "list" : "grid";
 
   return (
-    <div className="bg-background flex h-screen flex-col">
-      <DriveHeader />
-      <div className="flex flex-1 overflow-hidden">
-        <DriveSidebar />
-        <DriveMobileSidebar />
-        <DriveContent
-          files={files}
-          folders={folders}
-          parents={[]}
-          initialViewMode={initialViewMode}
-          folderId={null}
-        />
-      </div>
-    </div>
+    <DriveContent
+      files={files}
+      folders={folders}
+      parents={[]}
+      initialViewMode={initialViewMode}
+      folderId={null}
+    />
   );
 }
