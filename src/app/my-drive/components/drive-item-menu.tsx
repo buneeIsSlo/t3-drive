@@ -7,7 +7,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
-import { FilePenLine, MoreVertical, Star, Trash } from "lucide-react";
+import {
+  FilePenLine,
+  FolderPen,
+  MoreVertical,
+  Star,
+  Trash,
+} from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import { deleteFile, deleteFolder } from "../actions";
@@ -71,7 +77,11 @@ export function DriveItemMenu({ fileId, folderId, name }: DriveItemMenuProps) {
               setMenuOpen(false);
             }}
           >
-            <FilePenLine className="mr-2 h-4 w-4" />
+            {fileId ? (
+              <FilePenLine className="mr-2 h-4 w-4" />
+            ) : (
+              <FolderPen className="mr-2 h-4 w-4" />
+            )}
             Rename
           </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onClick={handleDelete}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, useTransition } from "react";
-import { FilePenLine } from "lucide-react";
+import { FilePenLine, FolderPen } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -65,7 +65,11 @@ export default function RenameItemDialog({
             className="flex size-9 shrink-0 items-center justify-center rounded-full border"
             aria-hidden="true"
           >
-            <FilePenLine className="opacity-80" size={16} />
+            {type === "file" ? (
+              <FilePenLine className="opacity-80" size={16} />
+            ) : (
+              <FolderPen className="opacity-80" size={16} />
+            )}
           </div>
           <DialogHeader>
             <DialogTitle className="sm:text-center">Rename {type}</DialogTitle>
