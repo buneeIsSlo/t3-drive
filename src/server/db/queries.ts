@@ -167,7 +167,10 @@ export const QUERIES = {
       .select()
       .from(foldersSchema)
       .where(
-        and(eq(foldersSchema.ownerId, userId), eq(foldersSchema.isTrashed, true)),
+        and(
+          eq(foldersSchema.ownerId, userId),
+          eq(foldersSchema.isTrashed, true),
+        ),
       )
       .orderBy(desc(foldersSchema.createdAt));
 
@@ -225,6 +228,33 @@ export const MUTATIONS = {
     return await db
       .update(foldersSchema)
       .set({ name: input.name })
+      .where(eq(foldersSchema.id, input.id));
+  },
+  toggleFileStar: async function (input: { id: number; isStarred: boolean }) {
+    return await db
+      .update(filesSchema)
+      .set({ isStarred: input.isStarred })
+      .where(eq(filesSchema.id, input.id));
+  },
+  toggleFolderStar: async function (input: { id: number; isStarred: boolean }) {
+    return await db
+      .update(foldersSchema)
+      .set({ isStarred: input.isStarred })
+      .where(eq(foldersSchema.id, input.id));
+  },
+  toggleFileTrash: async function (input: { id: number; isTrashed: boolean }) {
+    return await db
+      .update(filesSchema)
+      .set({ isTrashed: input.isTrashed, isStarred: false })
+      .where(eq(filesSchema.id, input.id));
+  },
+  toggleFolderTrash: async function (input: {
+    id: number;
+    isTrashed: boolean;
+  }) {
+    return await db
+      .update(foldersSchema)
+      .set({ isTrashed: input.isTrashed, isStarred: false })
       .where(eq(foldersSchema.id, input.id));
   },
 };

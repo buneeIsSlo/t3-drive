@@ -224,3 +224,32 @@ export async function renameItem(input: {
 
   return { success: true } as const;
 }
+
+export async function starItem(input: {
+  id: number;
+  type: "file" | "folder";
+  isStarred: boolean;
+}) {
+  const user = await auth();
+
+  if (!user.userId) {
+    throw new Error("User not found");
+  }
+
+  if (input.type === "file") {
+    await MUTATIONS.toggleFileStar({
+      id: input.id,
+      isStarred: input.isStarred,
+    });
+  } else {
+    await MUTATIONS.toggleFolderStar({
+      id: input.id,
+      isStarred: input.isStarred,
+    });
+  }
+
+  const forceRefreshCookie = await cookies();
+  forceRefreshCookie.set("force-refresh", JSON.stringify(Math.random()));
+
+  return { success: true } as const;
+}

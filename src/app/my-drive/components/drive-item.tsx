@@ -1,6 +1,6 @@
 import type { filesTable, foldersTable } from "~/server/db/schema";
 import type { ViewMode } from "./drive-content";
-import { FolderIcon } from "lucide-react";
+import { FolderIcon, Star } from "lucide-react";
 import Link from "next/link";
 import { FileTypeIcon } from "./file-icon";
 import { DriveItemMenu } from "./drive-item-menu";
@@ -28,11 +28,14 @@ export function FileRow({
               extension={extension}
               className="text-muted-foreground h-5 w-5"
             />
-            <p className="text-foreground flex max-w-full text-sm font-medium">
+            <p className="text-foreground flex max-w-full items-center text-sm font-medium">
               <span className="block min-w-0 self-center truncate">
                 {baseName}
               </span>
               {extension && <span className="shrink-0">{extension}</span>}
+              {file.isStarred && (
+                <Star className="ml-2 h-4 w-4 fill-primary text-primary" />
+              )}
             </p>
           </div>
         </td>
@@ -56,6 +59,7 @@ export function FileRow({
               fileId={file.id}
               name={file.name}
               isTrashed={file.isTrashed}
+              isStarred={file.isStarred}
             />
           </div>
         </td>
@@ -83,11 +87,14 @@ export function FileRow({
           className="text-muted-foreground mx-auto h-12 w-12"
         />
         <div className="mt-2">
-          <p className="text-foreground flex max-w-full justify-center text-sm font-medium">
+          <p className="text-foreground flex max-w-full items-center justify-center text-sm font-medium">
             <span className="block min-w-0 self-center truncate">
               {baseName}
             </span>
             {extension && <span className="shrink-0">{extension}</span>}
+            {file.isStarred && (
+              <Star className="ml-2 h-4 w-4 fill-primary text-primary" />
+            )}
           </p>
         </div>
       </Link>
@@ -96,6 +103,7 @@ export function FileRow({
           fileId={file.id}
           name={file.name}
           isTrashed={file.isTrashed}
+          isStarred={file.isStarred}
         />
       </div>
     </li>
@@ -117,8 +125,11 @@ export function FolderRow({
         <td className="flex-1 px-3 py-3 align-middle">
           <div className="flex items-center gap-3">
             <FolderIcon className="text-muted-foreground h-5 w-5" />
-            <p className="text-foreground truncate text-sm font-medium">
+            <p className="text-foreground flex items-center truncate text-sm font-medium">
               {folder.name}
+              {folder.isStarred && (
+                <Star className="ml-2 h-4 w-4 fill-primary text-primary" />
+              )}
             </p>
           </div>
         </td>
@@ -142,6 +153,7 @@ export function FolderRow({
               folderId={folder.id}
               name={folder.name}
               isTrashed={folder.isTrashed}
+              isStarred={folder.isStarred}
             />
           </div>
         </td>
@@ -163,8 +175,11 @@ export function FolderRow({
       >
         <FolderIcon className="text-muted-foreground mx-auto h-12 w-12" />
         <div className="mt-2">
-          <p className="text-foreground truncate text-sm font-medium">
+          <p className="text-foreground flex items-center justify-center truncate text-sm font-medium">
             {folder.name}
+            {folder.isStarred && (
+              <Star className="ml-2 h-4 w-4 fill-primary text-primary" />
+            )}
           </p>
         </div>
       </Link>
@@ -173,6 +188,7 @@ export function FolderRow({
           folderId={folder.id}
           name={folder.name}
           isTrashed={folder.isTrashed}
+          isStarred={folder.isStarred}
         />
       </div>
     </li>

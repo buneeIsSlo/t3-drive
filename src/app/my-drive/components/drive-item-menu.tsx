@@ -13,10 +13,11 @@ import {
   MoreVertical,
   Star,
   Trash,
+  StarOff,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
-import { deleteFile, deleteFolder } from "../actions";
+import { deleteFile, deleteFolder, starItem } from "../actions";
 import RenameItemDialog from "./rename-item-dialog";
 
 interface DriveItemMenuProps {
@@ -24,6 +25,7 @@ interface DriveItemMenuProps {
   folderId?: number;
   name: string;
   isTrashed?: boolean;
+  isStarred?: boolean;
 }
 
 export function DriveItemMenu({
@@ -31,6 +33,7 @@ export function DriveItemMenu({
   folderId,
   name,
   isTrashed,
+  isStarred,
 }: DriveItemMenuProps) {
   const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -57,6 +60,20 @@ export function DriveItemMenu({
     }
   };
 
+  const handleStar = () => {
+    const id = fileId ?? folderId!;
+    const type = fileId ? "file" : "folder";
+
+    toast.promise(starItem({ id, type, isStarred: !isStarred }), {
+      loading: isStarred ? "Unstarring..." : "Starring...",
+      success: isStarred ? "Unstarred" : "Starred",
+      error: (err: unknown) => {
+        const message = err instanceof Error ? err.message : undefined;
+        return message ?? "Failed to star item";
+      },
+    });
+  };
+
   return (
     <React.Fragment>
       <RenameItemDialog
@@ -73,10 +90,16 @@ export function DriveItemMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>
-            <Star className="mr-2 h-4 w-4" />
-            Star
-          </DropdownMenuItem>
+          {!isTrashed && (
+            <DropdownMenuItem onClick={handleStar}>
+              {isStarred ? (
+                <StarOff className="mr-2 h-4 w-4" />
+              ) : (
+                <Star className="mr-2 h-4 w-4" />
+              )}
+              {isStarred ? "Unstar" : "Star"}
+            </DropdownMenuItem>
+          )}
           {!isTrashed && (
             <DropdownMenuItem
               onSelect={() => {
