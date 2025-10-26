@@ -14,10 +14,18 @@ import {
   Star,
   Trash,
   StarOff,
+  Trash2,
+  RefreshCcw,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
-import { deleteFile, deleteFolder, starItem } from "../actions";
+import {
+  deleteFile,
+  deleteFolder,
+  starItem,
+  trashItem,
+  restoreItem,
+} from "../actions";
 import RenameItemDialog from "./rename-item-dialog";
 
 interface DriveItemMenuProps {
@@ -38,23 +46,36 @@ export function DriveItemMenu({
   const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
   const [isMenuOpen, setMenuOpen] = useState(false);
 
-  const handleDelete = () => {
-    if (fileId) {
-      toast.promise(deleteFile(fileId), {
-        loading: "Deleting file...",
-        success: "File deleted",
+  const handleTrashOrDelete = () => {
+    if (isTrashed) {
+      if (fileId) {
+        toast.promise(deleteFile(fileId), {
+          loading: "Deleting file...",
+          success: "File deleted",
+          error: (err: unknown) => {
+            const message = err instanceof Error ? err.message : undefined;
+            return message ?? "Failed to delete file";
+          },
+        });
+      } else if (folderId) {
+        toast.promise(deleteFolder(folderId), {
+          loading: "Deleting folder...",
+          success: "Folder deleted",
+          error: (err: unknown) => {
+            const message = err instanceof Error ? err.message : undefined;
+            return message ?? "Failed to delete folder";
+          },
+        });
+      }
+    } else {
+      const id = fileId ?? folderId!;
+      const type = fileId ? "file" : "folder";
+      toast.promise(trashItem({ id, type }), {
+        loading: "Trashing item...",
+        success: "Item trashed",
         error: (err: unknown) => {
           const message = err instanceof Error ? err.message : undefined;
-          return message ?? "Failed to delete file";
-        },
-      });
-    } else if (folderId) {
-      toast.promise(deleteFolder(folderId), {
-        loading: "Deleting folder...",
-        success: "Folder deleted",
-        error: (err: unknown) => {
-          const message = err instanceof Error ? err.message : undefined;
-          return message ?? "Failed to delete folder";
+          return message ?? "Failed to trash item";
         },
       });
     }
@@ -70,6 +91,20 @@ export function DriveItemMenu({
       error: (err: unknown) => {
         const message = err instanceof Error ? err.message : undefined;
         return message ?? "Failed to star item";
+      },
+    });
+  };
+
+  const handleRestore = () => {
+    const id = fileId ?? folderId!;
+    const type = fileId ? "file" : "folder";
+
+    toast.promise(restoreItem({ id, type }), {
+      loading: "Restoring item...",
+      success: "Item restored",
+      error: (err: unknown) => {
+        const message = err instanceof Error ? err.message : undefined;
+        return message ?? "Failed to restore item";
       },
     });
   };
@@ -90,6 +125,12 @@ export function DriveItemMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          {isTrashed && (
+            <DropdownMenuItem onClick={handleRestore}>
+              <RefreshCcw className="mr-2 h-4 w-4" />
+              Restore
+            </DropdownMenuItem>
+          )}
           {!isTrashed && (
             <DropdownMenuItem onClick={handleStar}>
               {isStarred ? (
@@ -115,9 +156,13 @@ export function DriveItemMenu({
               Rename
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-            <Trash className="mr-2 h-4 w-4" />
-            Delete
+          <DropdownMenuItem variant="destructive" onClick={handleTrashOrDelete}>
+            {isTrashed ? (
+              <Trash2 className="mr-2 h-4 w-4" />
+            ) : (
+              <Trash className="mr-2 h-4 w-4" />
+            )}
+            {isTrashed ? "Delete" : "Trash"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

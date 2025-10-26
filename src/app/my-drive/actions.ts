@@ -58,7 +58,7 @@ export async function createNewFolder(
   }
 }
 
-export async function deleteFile(fileId: number) {
+export async function permanentlyDeleteFile(fileId: number) {
   const user = await auth();
 
   if (!user.userId) {
@@ -89,7 +89,11 @@ export async function deleteFile(fileId: number) {
   return { success: true } as const;
 }
 
-export async function deleteFolder(folderId: number) {
+export async function deleteFile(fileId: number) {
+  return permanentlyDeleteFile(fileId);
+}
+
+export async function permanentlyDeleteFolder(folderId: number) {
   const user = await auth();
 
   if (!user.userId) {
@@ -198,6 +202,10 @@ export async function deleteFolder(folderId: number) {
   }
 }
 
+export async function deleteFolder(folderId: number) {
+  return permanentlyDeleteFolder(folderId);
+}
+
 export async function renameItem(input: {
   id: number;
   type: "file" | "folder";
@@ -245,6 +253,62 @@ export async function starItem(input: {
     await MUTATIONS.toggleFolderStar({
       id: input.id,
       isStarred: input.isStarred,
+    });
+  }
+
+  const forceRefreshCookie = await cookies();
+  forceRefreshCookie.set("force-refresh", JSON.stringify(Math.random()));
+
+  return { success: true } as const;
+}
+
+export async function restoreItem(input: {
+  id: number;
+  type: "file" | "folder";
+}) {
+  const user = await auth();
+
+  if (!user.userId) {
+    throw new Error("User not found");
+  }
+
+  if (input.type === "file") {
+    await MUTATIONS.toggleFileTrash({
+      id: input.id,
+      isTrashed: false,
+    });
+  } else {
+    await MUTATIONS.toggleFolderTrash({
+      id: input.id,
+      isTrashed: false,
+    });
+  }
+
+  const forceRefreshCookie = await cookies();
+  forceRefreshCookie.set("force-refresh", JSON.stringify(Math.random()));
+
+  return { success: true } as const;
+}
+
+export async function trashItem(input: {
+  id: number;
+  type: "file" | "folder";
+}) {
+  const user = await auth();
+
+  if (!user.userId) {
+    throw new Error("User not found");
+  }
+
+  if (input.type === "file") {
+    await MUTATIONS.toggleFileTrash({
+      id: input.id,
+      isTrashed: true,
+    });
+  } else {
+    await MUTATIONS.toggleFolderTrash({
+      id: input.id,
+      isTrashed: true,
     });
   }
 

@@ -46,6 +46,7 @@ export const QUERIES = {
           folderId === null
             ? isNull(foldersSchema.parent)
             : eq(foldersSchema.parent, folderId),
+          eq(foldersSchema.isTrashed, false),
         ),
       )
       .orderBy(asc(foldersSchema.createdAt));
@@ -70,6 +71,7 @@ export const QUERIES = {
           folderId === null
             ? isNull(filesSchema.parent)
             : eq(filesSchema.parent, folderId),
+          eq(filesSchema.isTrashed, false),
         ),
       )
       .orderBy(asc(filesSchema.createdAt));
