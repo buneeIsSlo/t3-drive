@@ -26,17 +26,23 @@ export type ViewMode = "grid" | "list";
 interface DriveContentProps {
   files: FileItem[];
   folders: FolderItem[];
-  parents: FolderItem[]; // ordered from root to current
+  parents?: FolderItem[]; // ordered from root to current
   initialViewMode?: ViewMode;
-  folderId: number | null;
+  folderId?: number | null;
+  title?: string;
+  showUploadButton?: boolean;
+  showCreateFolderButton?: boolean;
 }
 
 export function DriveContent({
   files: initialFiles,
   folders: initialFolders,
-  parents,
+  parents = [],
   initialViewMode,
   folderId = null,
+  title,
+  showUploadButton = true,
+  showCreateFolderButton = true,
 }: DriveContentProps) {
   const [dragOver, setDragOver] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode ?? "grid");
@@ -64,47 +70,51 @@ export function DriveContent({
       <div className="border-border bg-background border-b p-4">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              {parents.length > 0 && (
-                <Link
-                  href={
-                    parents.length > 1
-                      ? `/my-drive/folders/${parents[parents.length - 2]!.id}`
-                      : `/my-drive`
-                  }
-                >
-                  <Button variant="outline" size="icon">
-                    <ArrowLeft className="h-4 w-4" />
-                  </Button>
-                </Link>
-              )}
-              <nav className="flex items-center gap-1 text-sm">
-                <div className="flex items-center gap-1">
+            {!title ? (
+              <div className="flex items-center gap-2">
+                {parents.length > 0 && (
                   <Link
-                    href="/my-drive"
-                    className="text-foreground hover:text-primary transition-colors"
+                    href={
+                      parents.length > 1
+                        ? `/my-drive/folders/${parents[parents.length - 2]!.id}`
+                        : `/my-drive`
+                    }
                   >
-                    My Drive
+                    <Button variant="outline" size="icon">
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
                   </Link>
-                  {parents.length > 0 && (
-                    <ChevronRight className="text-muted-foreground h-4 w-4" />
-                  )}
-                </div>
-                {parents.map((segment, index) => (
-                  <div key={index} className="flex items-center gap-1">
+                )}
+                <nav className="flex items-center gap-1 text-sm">
+                  <div className="flex items-center gap-1">
                     <Link
-                      href={`/my-drive/folders/${segment.id}`}
+                      href="/my-drive"
                       className="text-foreground hover:text-primary transition-colors"
                     >
-                      {segment.name}
+                      My Drive
                     </Link>
-                    {index < parents.length - 1 && (
+                    {parents.length > 0 && (
                       <ChevronRight className="text-muted-foreground h-4 w-4" />
                     )}
                   </div>
-                ))}
-              </nav>
-            </div>
+                  {parents.map((segment, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      <Link
+                        href={`/my-drive/folders/${segment.id}`}
+                        className="text-foreground hover:text-primary transition-colors"
+                      >
+                        {segment.name}
+                      </Link>
+                      {index < parents.length - 1 && (
+                        <ChevronRight className="text-muted-foreground h-4 w-4" />
+                      )}
+                    </div>
+                  ))}
+                </nav>
+              </div>
+            ) : (
+              <h1 className="text-xl font-semibold">{title}</h1>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -135,10 +145,12 @@ export function DriveContent({
           </div>
         </div>
 
-          <div className="flex items-center gap-2">
-            <UploadFilesButton folderId={folderId} />
+        <div className="flex items-center gap-2">
+          {showUploadButton && <UploadFilesButton folderId={folderId} />}
+          {showCreateFolderButton && (
             <CreateNewFolderButton parentFolderId={folderId} />
-          </div>
+          )}
+        </div>
       </div>
 
       {/* Content Area */}
@@ -247,21 +259,23 @@ export function DriveContent({
             </div>
           ))}
 
-        {initialFolders.length === 0 && initialFiles.length === 0 && !dragOver && (
-          <div className="flex h-full items-center justify-center">
-            <div className="text-center">
-              <div className="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
-                <HardDrive className="text-muted-foreground h-12 w-12" />
+        {initialFolders.length === 0 &&
+          initialFiles.length === 0 &&
+          !dragOver && (
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <div className="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
+                  <HardDrive className="text-muted-foreground h-12 w-12" />
+                </div>
+                <p className="text-foreground mb-2 text-lg font-medium">
+                  This folder is empty
+                </p>
+                <p className="text-muted-foreground">
+                  Drop files here or use the upload button to add content
+                </p>
               </div>
-              <p className="text-foreground mb-2 text-lg font-medium">
-                This folder is empty
-              </p>
-              <p className="text-muted-foreground">
-                Drop files here or use the upload button to add content
-              </p>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </main>
   );

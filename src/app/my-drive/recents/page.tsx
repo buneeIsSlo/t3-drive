@@ -1,7 +1,21 @@
-export default function RecentsPage() {
+import { auth } from "@clerk/nextjs/server";
+import { DriveContent } from "~/app/my-drive/components/drive-content";
+import { QUERIES } from "~/server/db/queries";
+
+export default async function RecentsPage() {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("Unauthorized");
+
+  const { files, folders } = await QUERIES.getRecentItems(userId);
+
   return (
-    <main className="flex-1 overflow-y-auto p-4">
-      <h1 className="text-2xl font-bold">Recents</h1>
-    </main>
+    <DriveContent
+      files={files}
+      folders={folders}
+      title="Recents"
+      showUploadButton={false}
+      showCreateFolderButton={false}
+    />
   );
 }

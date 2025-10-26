@@ -1,7 +1,21 @@
-export default function TrashPage() {
+import { auth } from "@clerk/nextjs/server";
+import { DriveContent } from "~/app/my-drive/components/drive-content";
+import { QUERIES } from "~/server/db/queries";
+
+export default async function TrashPage() {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("Unauthorized");
+
+  const { files, folders } = await QUERIES.getTrashedItems(userId);
+
   return (
-    <main className="flex-1 overflow-y-auto p-4">
-      <h1 className="text-2xl font-bold">Trash</h1>
-    </main>
+    <DriveContent
+      files={files}
+      folders={folders}
+      title="Trash"
+      showUploadButton={false}
+      showCreateFolderButton={false}
+    />
   );
 }

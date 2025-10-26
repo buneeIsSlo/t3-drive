@@ -52,7 +52,11 @@ export function FileRow({
         </td>
         <td className="p-2 text-right align-middle">
           <div className="pointer-events-none relative z-10 flex items-center justify-end">
-            <DriveItemMenu fileId={file.id} name={file.name} />
+            <DriveItemMenu
+              fileId={file.id}
+              name={file.name}
+              isTrashed={file.isTrashed}
+            />
           </div>
         </td>
         <Link
@@ -88,7 +92,11 @@ export function FileRow({
         </div>
       </Link>
       <div className="absolute top-2 right-2 z-20 opacity-0 transition-opacity group-hover:opacity-100">
-        <DriveItemMenu fileId={file.id} name={file.name} />
+        <DriveItemMenu
+          fileId={file.id}
+          name={file.name}
+          isTrashed={file.isTrashed}
+        />
       </div>
     </li>
   );
@@ -130,7 +138,11 @@ export function FolderRow({
         </td>
         <td className="p-2 text-right align-middle">
           <div className="pointer-events-none relative z-10 flex items-center justify-end">
-            <DriveItemMenu folderId={folder.id} name={folder.name} />
+            <DriveItemMenu
+              folderId={folder.id}
+              name={folder.name}
+              isTrashed={folder.isTrashed}
+            />
           </div>
         </td>
         <Link
@@ -157,7 +169,11 @@ export function FolderRow({
         </div>
       </Link>
       <div className="absolute top-2 right-2 z-20 opacity-0 transition-opacity group-hover:opacity-100">
-        <DriveItemMenu folderId={folder.id} name={folder.name} />
+        <DriveItemMenu
+          folderId={folder.id}
+          name={folder.name}
+          isTrashed={folder.isTrashed}
+        />
       </div>
     </li>
   );

@@ -23,9 +23,15 @@ interface DriveItemMenuProps {
   fileId?: number;
   folderId?: number;
   name: string;
+  isTrashed?: boolean;
 }
 
-export function DriveItemMenu({ fileId, folderId, name }: DriveItemMenuProps) {
+export function DriveItemMenu({
+  fileId,
+  folderId,
+  name,
+  isTrashed,
+}: DriveItemMenuProps) {
   const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
   const [isMenuOpen, setMenuOpen] = useState(false);
 
@@ -71,19 +77,21 @@ export function DriveItemMenu({ fileId, folderId, name }: DriveItemMenuProps) {
             <Star className="mr-2 h-4 w-4" />
             Star
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => {
-              setRenameDialogOpen(true);
-              setMenuOpen(false);
-            }}
-          >
-            {fileId ? (
-              <FilePenLine className="mr-2 h-4 w-4" />
-            ) : (
-              <FolderPen className="mr-2 h-4 w-4" />
-            )}
-            Rename
-          </DropdownMenuItem>
+          {!isTrashed && (
+            <DropdownMenuItem
+              onSelect={() => {
+                setRenameDialogOpen(true);
+                setMenuOpen(false);
+              }}
+            >
+              {fileId ? (
+                <FilePenLine className="mr-2 h-4 w-4" />
+              ) : (
+                <FolderPen className="mr-2 h-4 w-4" />
+              )}
+              Rename
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem variant="destructive" onClick={handleDelete}>
             <Trash className="mr-2 h-4 w-4" />
             Delete

@@ -1,4 +1,5 @@
 import {
+  boolean,
   int,
   bigint,
   index,
@@ -21,6 +22,8 @@ export const filesTable = createTable(
     name: text("name").notNull(),
     size: int("size").notNull(),
     url: text("url").notNull(),
+    isStarred: boolean("is_starred").notNull().default(false),
+    isTrashed: boolean("is_trashed").notNull().default(false),
     parent: bigint("parent", { mode: "number", unsigned: true }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -40,6 +43,8 @@ export const foldersTable = createTable(
       .autoincrement(),
     ownerId: text("owner_id").notNull(),
     name: text("name").notNull(),
+    isStarred: boolean("is_starred").notNull().default(false),
+    isTrashed: boolean("is_trashed").notNull().default(false),
     parent: bigint("parent", { mode: "number", unsigned: true }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },

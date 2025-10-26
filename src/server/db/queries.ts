@@ -5,7 +5,7 @@ import {
   filesTable as filesSchema,
   foldersTable as foldersSchema,
 } from "~/server/db/schema";
-import { and, asc, eq, isNull, like, sql } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, like, sql } from "drizzle-orm";
 
 export const QUERIES = {
   async getAlParentsForFolder(userId: string, folderId: number) {
@@ -101,20 +101,92 @@ export const QUERIES = {
     return { files, folders };
   },
 
-  async getUserStorageUsed(userId: string): Promise<number>{
-    try {
-  const result = await db
-  .select({totalSize: sql<number>`SUM(${filesSchema.size})`})
-  .from(filesSchema)
-  .where(eq(filesSchema.ownerId, userId));
+  async getRecentItems(userId: string) {
+    const files = await db
+      .select()
+      .from(filesSchema)
+      .where(
+        and(eq(filesSchema.ownerId, userId), eq(filesSchema.isTrashed, false)),
+      )
+      .orderBy(desc(filesSchema.createdAt))
+      .limit(50);
 
-  return result[0]?.totalSize ?? 0;
-    }
-    catch(error) {
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(
+          eq(foldersSchema.ownerId, userId),
+          eq(foldersSchema.isTrashed, false),
+        ),
+      )
+      .orderBy(desc(foldersSchema.createdAt))
+      .limit(50);
+
+    return { files, folders };
+  },
+
+  async getStarredItems(userId: string) {
+    const files = await db
+      .select()
+      .from(filesSchema)
+      .where(
+        and(
+          eq(filesSchema.ownerId, userId),
+          eq(filesSchema.isStarred, true),
+          eq(filesSchema.isTrashed, false),
+        ),
+      )
+      .orderBy(desc(filesSchema.createdAt));
+
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(
+          eq(foldersSchema.ownerId, userId),
+          eq(foldersSchema.isStarred, true),
+          eq(foldersSchema.isTrashed, false),
+        ),
+      )
+      .orderBy(desc(foldersSchema.createdAt));
+
+    return { files, folders };
+  },
+
+  async getTrashedItems(userId: string) {
+    const files = await db
+      .select()
+      .from(filesSchema)
+      .where(
+        and(eq(filesSchema.ownerId, userId), eq(filesSchema.isTrashed, true)),
+      )
+      .orderBy(desc(filesSchema.createdAt));
+
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(eq(foldersSchema.ownerId, userId), eq(foldersSchema.isTrashed, true)),
+      )
+      .orderBy(desc(foldersSchema.createdAt));
+
+    return { files, folders };
+  },
+
+  async getUserStorageUsed(userId: string): Promise<number> {
+    try {
+      const result = await db
+        .select({ totalSize: sql<number>`SUM(${filesSchema.size})` })
+        .from(filesSchema)
+        .where(eq(filesSchema.ownerId, userId));
+
+      return result[0]?.totalSize ?? 0;
+    } catch (error) {
       console.error("Error fetching user storage usage: ", error);
       return 0;
     }
-  }
+  },
 };
 
 export const MUTATIONS = {

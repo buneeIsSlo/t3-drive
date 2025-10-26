@@ -1,7 +1,21 @@
-export default function StarredPage() {
+import { auth } from "@clerk/nextjs/server";
+import { DriveContent } from "~/app/my-drive/components/drive-content";
+import { QUERIES } from "~/server/db/queries";
+
+export default async function StarredPage() {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("Unauthorized");
+
+  const { files, folders } = await QUERIES.getStarredItems(userId);
+
   return (
-    <main className="flex-1 overflow-y-auto p-4">
-      <h1 className="text-2xl font-bold">Starred</h1>
-    </main>
+    <DriveContent
+      files={files}
+      folders={folders}
+      title="Starred"
+      showUploadButton={false}
+      showCreateFolderButton={false}
+    />
   );
 }
