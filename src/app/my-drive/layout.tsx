@@ -2,6 +2,7 @@ import { DriveHeader } from "~/app/my-drive/components/drive-header";
 import { DriveSidebar } from "~/app/my-drive/components/drive-sidebar";
 import { DriveMobileSidebar } from "~/app/my-drive/components/drive-mobile-sidebar";
 import { StorageProvider } from "~/context/storage-context";
+import { LatencyWarningBanner } from "~/app/my-drive/components/latency-warning-banner";
 
 export default function MyDriveLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function MyDriveLayout({ children }: { children: React.ReactNode 
           <DriveMobileSidebar />
           {children}
         </div>
+        <LatencyWarningBanner />
       </div>
     </StorageProvider>
   );
