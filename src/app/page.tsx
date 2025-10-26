@@ -34,12 +34,12 @@ export default async function Home() {
             Next.js <ExternalLink className="ml-1 inline-block h-4 w-4" />
           </a>
           <a
-            href="https://ui.shadcn.com"
+            href="https://tailwindcss.com/"
             target="_blank"
             rel="noreferrer"
             className="underline hover:no-underline"
           >
-            shadcn/ui <ExternalLink className="ml-1 inline-block h-4 w-4" />
+            Tailwind CSS <ExternalLink className="ml-1 inline-block h-4 w-4" />
           </a>
           <a
             href="https://orm.drizzle.team"
